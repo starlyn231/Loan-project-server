@@ -19,7 +19,7 @@ app.use(morgan('dev')) // for logging
 app.use('/api/v1', require('./routes/posts'))
 app.use('/api/v1', require('./routes/auth'))
 app.use('/api/v1', require('./routes/features'))
-
+app.use('/api/v1', require('./routes/customer'))
 
 
 app.listen(process.env.PORT || 5000,  () => {
