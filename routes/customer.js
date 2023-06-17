@@ -7,6 +7,7 @@ const verifyAuth = require('../middleware/verifyAuth')
 
 // GET | /api/v1/customer | public | get all customer 
 router.get('/customers', async (req, res) => {
+    
     try {
         const customer = await Customer.find()
         return res.status(200).json({

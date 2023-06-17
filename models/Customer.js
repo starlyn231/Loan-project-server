@@ -1,13 +1,19 @@
 const mongoose = require('mongoose');
 
 const CustomerSchema = new mongoose.Schema({
-  cedula: {
+  UserId: {
     type: String,
     unique: true,
-    required: true
+    required: true,
+    immutable: true,
   },
   customer_image: {
     type: String
+  },
+  age: {
+    type: Number,
+    min: 18,
+    max:65,
   },
   name: {
     type: String,
@@ -21,7 +27,7 @@ const CustomerSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true ,
+    unique: true,
     match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/]
   },
   job: {
@@ -29,7 +35,7 @@ const CustomerSchema = new mongoose.Schema({
     required: true
   },
   salary: {
-    type: String,
+    type: Number,
     required: true
   },
   phone: {
@@ -51,12 +57,12 @@ const CustomerSchema = new mongoose.Schema({
 
   sector: {
     type: String,
-    
+
   },
   loanList: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Loan'
+      ref: 'loan'
     }
   ],
   // Otros campos del cliente
@@ -65,10 +71,10 @@ const CustomerSchema = new mongoose.Schema({
     default: Date.now
   }
 },
-   {
+  {
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
-});
+  });
 /*
 CustomerSchema.pre('save', async function (next) {
   let date_info = new Date
@@ -77,11 +83,12 @@ CustomerSchema.pre('save', async function (next) {
 })
 
 */
+/*
 CustomerSchema.virtual('loans', {
-  ref: 'Loan',
-  localField: '_idloans',
+  ref: 'loan',
+  localField: 'cliente',
   foreignField: '_id',
- // justOne: true
+ justOne: false
 })
-
+*/
 module.exports = mongoose.model('customer', CustomerSchema);

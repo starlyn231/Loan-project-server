@@ -41,3 +41,4 @@ UserSchema.virtual('posts', {
   justOne: false
 })
 module.exports = mongoose.model('user', UserSchema)
+

@@ -2,15 +2,25 @@ const mongoose = require("mongoose");
 
 const LoanSchema = new mongoose.Schema(
   {
-    customer: {
+   
+    cliente: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'customer',
       required: true
-    },
-    numberLoan: { type: String, required: true, unique: true },
-    amount: { type: String, required: true },
-    cuota: { type: String, required: true },
+  },
+  salary: { type: Number, required: true },
+  cedula:  { type: String, required: true},
+  lastName: { type: String, required: true, },
+  name: { type: String, required: true},
+  job: { type: String, required: true},
+    amount: { type: Number, required: true },
+    loanPayment: { type: Number, required: true },
+    time: { type: Number, required: true },
     categories: { type: Array },
+    interestRate: { type: Number, required: true },
+    motiveLoan:{ type:String},
+   // typeLoan:{type: String, required: true},
+    status: { type: String, default: "pending" },
    
   }, {
     toJSON: { virtuals: true },
@@ -18,5 +28,13 @@ const LoanSchema = new mongoose.Schema(
   }
 
 );
+/*
+LoanSchema.virtual('loan_by', {
+  ref: 'customer',
+  localField: 'cliente',
+  foreignField: '_id',
+  justOne: true
+})
 
-module.exports = mongoose.model("Loan", LoanSchema);
+*/
+module.exports = mongoose.model("loan", LoanSchema);
