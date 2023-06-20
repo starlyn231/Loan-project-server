@@ -16,7 +16,9 @@ router.get('/loan', async (req, res) => {
         //  console.log( 'get user:',get_user )
         //const loanData  = await Loan.find({cliente: get_user}).populate('loan_by')
         //    const loanData= await Loan.find().populate('customer')
+
         const loanData = await Loan.find()
+        console.log(loanData)
         return res.status(200).json({
             data: loanData,
             success: true
@@ -57,18 +59,28 @@ router.get('/loan/:id', async (req, res) => {
 // LOAN | /api/v1/add-newloan| private | add a new customer
 router.post('/add-newloan', verifyAuth, async (req, res) => {
 
-    const customerId = '6488f673324ef701e4d47242';
     const loanData = {
-        cliente: customerId,
+    cliente: req.body.name,
         ...req.body
     };
     try {
         // Obtén el ID del cliente seleccionado desde el frontend
         // Crea un nuevo préstamo
-        const loan = await Loan.create(loanData);
+        const loan = await Loan.create({
+            nameClient:req.body.name,
+            cliente:req.body.id,
+            salary: req.body.salary,
+            amount: req.body.amount,
+            cedula: req.body.cedula,
+            interestRate: req.body.interestRate,
+            job: req.body.job,
+            loanPayment:req.body.loanPayment,
+            motiveLoan: req.body.motiveLoan,
+            time: req.body.time
+        });
         // Encuentra al cliente seleccionado y agrega el ID del préstamo a su lista de préstamos
         const customer = await Customer.findByIdAndUpdate(
-            customerId,
+            req.body.id,
             { $push: { loanList: loan._id } }, // Agrega el ID del préstamo a la lista de préstamos del cliente
             { new: true } // Devuelve el cliente actualizado
         ).populate('loanList'); // Utiliza populate para cargar la lista de préstamos del cliente

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const CustomerSchema = new mongoose.Schema({
-  UserId: {
+ /*UserId: {
     type: String,
     unique: true,
     required: true,
@@ -9,11 +9,16 @@ const CustomerSchema = new mongoose.Schema({
   },
   customer_image: {
     type: String
-  },
+  },*/
+  cedula:  { type: String, required: true, immutable: true},
   age: {
     type: Number,
     min: 18,
     max:65,
+  },
+  name: {
+    type: String,
+    required: true
   },
   name: {
     type: String,
@@ -86,9 +91,10 @@ CustomerSchema.pre('save', async function (next) {
 /*
 CustomerSchema.virtual('loans', {
   ref: 'loan',
-  localField: 'cliente',
-  foreignField: '_id',
+  localField: '_id',
+  foreignField: 'cliente',
  justOne: false
 })
 */
+
 module.exports = mongoose.model('customer', CustomerSchema);

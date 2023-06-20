@@ -8,10 +8,11 @@ const LoanSchema = new mongoose.Schema(
       ref: 'customer',
       required: true
   },
-  salary: { type: Number, required: true },
+  nameClient: { type: String},
+  salary: { type: Number,  },
   cedula:  { type: String, required: true},
-  lastName: { type: String, required: true, },
-  name: { type: String, required: true},
+ //lastName: { type: String, required: true, },
+ // name: { type: String, required: true},
   job: { type: String, required: true},
     amount: { type: Number, required: true },
     loanPayment: { type: Number, required: true },
@@ -21,12 +22,17 @@ const LoanSchema = new mongoose.Schema(
     motiveLoan:{ type:String},
    // typeLoan:{type: String, required: true},
     status: { type: String, default: "pending" },
+
+    created_at: {
+      type: Date,
+      default: Date.now
+    },
    
   }, {
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
   }
-
+ 
 );
 /*
 LoanSchema.virtual('loan_by', {
@@ -35,6 +41,6 @@ LoanSchema.virtual('loan_by', {
   foreignField: '_id',
   justOne: true
 })
-
 */
+
 module.exports = mongoose.model("loan", LoanSchema);

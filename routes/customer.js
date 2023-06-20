@@ -38,9 +38,11 @@ router.get('/customer/:id', async (req, res) => {
 })
 // POST | /api/v1/add-newCustomer| private | add a new customer
 router.post('/add-newCustomer', verifyAuth, async (req, res) => {
+    console.log(req.body)
 
     try {
         const client = await Customer.create({
+
             salary: req.body.salary,
             address: req.body.address,
             province: req.body.province,
@@ -68,6 +70,9 @@ router.post('/add-newCustomer', verifyAuth, async (req, res) => {
                 // Error de clave duplicada en el campo "cedula"
                 return res.status(400).json({ error: 'La cedula ya está registrada, inserte otra' });
             }
+            if(error.code === 11000){
+                return res.status(400).json({ error: 'error otra', error }); 
+            }
         }
 
        else {
@@ -75,7 +80,7 @@ router.post('/add-newCustomer', verifyAuth, async (req, res) => {
             res.status(400).json({ success: false ,  message: 'Internal Server Error'});
         }
   
-        return res.status(500).json({ error: 'Internal Server Error' });
+        return res.status(500).json({ error});
     }
 
 })
