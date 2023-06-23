@@ -22,7 +22,22 @@ const LoanSchema = new mongoose.Schema(
     motiveLoan:{ type:String},
    // typeLoan:{type: String, required: true},
     status: { type: String, default: "pending" },
-
+    totalPayment: { type: Number, required: true },
+    totalPaymentOriginal: { type: Number, required: true },
+    payments: [{
+      amount: {
+        type: Number,
+        required: true
+      },
+      paymentDate: {
+        type: Date,
+        required: true
+      }
+    }],
+    dueDate: {
+      type: Date,
+      required: true
+    },
     created_at: {
       type: Date,
       default: Date.now

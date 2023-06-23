@@ -1,6 +1,8 @@
 const router = require('express').Router()
 // Models
 const Loan = require('../models/Loan')
+const moment = require('moment');
+
 
 // MIDDLEWARE
 const verifyAuth = require('../middleware/verifyAuth')
@@ -11,12 +13,8 @@ router.get('/loan', async (req, res) => {
 
     //  const user = await Loan.find({}).populate('customer')
     try {
-        //  console.log( 'datos',req)
-        //  const get_user = await Customer.findById(req.customer)
-        //  console.log( 'get user:',get_user )
-        //const loanData  = await Loan.find({cliente: get_user}).populate('loan_by')
-        //    const loanData= await Loan.find().populate('customer')
-
+      
+   
         const loanData = await Loan.find()
         console.log(loanData)
         return res.status(200).json({
@@ -65,7 +63,15 @@ router.post('/add-newloan', verifyAuth, async (req, res) => {
     };
     try {
         // Obtén el ID del cliente seleccionado desde el frontend
-        // Crea un nuevo préstamo
+        const loanDate = new Date(); // Obtén la fecha actual
+        const dueDate = new Date(loanDate.getTime() + 30 * 24 * 60 * 60 * 1000); // Añade 30 días a la fecha actual
+        
+        const day = dueDate.getDate(); // Obtén el día del mes
+        const month = dueDate.getMonth() + 1; // Obtén el mes (se suma 1 porque los meses en JavaScript son basados en 0)
+        
+        console.log('Día:', dueDate);
+        console.log('Mes:', month);
+
         const loan = await Loan.create({
             nameClient:req.body.name,
             cliente:req.body.id,
@@ -76,7 +82,11 @@ router.post('/add-newloan', verifyAuth, async (req, res) => {
             job: req.body.job,
             loanPayment:req.body.loanPayment,
             motiveLoan: req.body.motiveLoan,
-            time: req.body.time
+            time: req.body.time,
+            totalPayment:req.body.totalPayment,
+            totalPaymentOriginal:req.body.totalPayment,
+            dueDate: dueDate, // Calcula la fecha de vencimiento para dentro de 1 mes
+          
         });
         // Encuentra al cliente seleccionado y agrega el ID del préstamo a su lista de préstamos
         const customer = await Customer.findByIdAndUpdate(
@@ -86,6 +96,7 @@ router.post('/add-newloan', verifyAuth, async (req, res) => {
         ).populate('loanList'); // Utiliza populate para cargar la lista de préstamos del cliente
 
         res.status(200).json({
+            loan,
             data: customer,
             success: true,
         });

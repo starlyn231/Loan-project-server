@@ -21,7 +21,7 @@ app.use('/api/v1', require('./routes/auth'))
 app.use('/api/v1', require('./routes/features'))
 app.use('/api/v1', require('./routes/customer'))
 app.use('/api/v1', require('./routes/loan'))
-
+app.use('/api/v1', require('./routes/payments'))
 app.listen(process.env.PORT || 5000,  () => {
   console.log(`Backend server is running!`,process.env.PORT );
 });
