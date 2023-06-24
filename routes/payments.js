@@ -7,7 +7,7 @@ const verifyAuth = require('../middleware/verifyAuth')
 const Customer = require('../models/Customer')
 const Payments = require('../models/Payments')
 
-// GET | /api/v1/loan | public | get all Loan 
+// GET | /api/v1/payments | public | get all payments 
 router.get('/payments', async (req, res) => {
 
 
@@ -48,19 +48,21 @@ router.post('/loan/:id/pay', verifyAuth, async (req, res) => {
 
 
     try {
+        console.log('req.params. ' ,req.params.id)
+        console.log(' body payment',req.body.payment)
         const loanId = req.params.id;
-        const paymentAmount = req.body.amount;
+        const paymentAmount = req.body.payment;
         // Aquí debes implementar la lógica para procesar el pago y actualizar el estado del préstamo
         // Puedes utilizar una pasarela de pago o alguna otra solución de tu elección para realizar el procesamiento del pago
-    
+
         // Get Loan
         const loan = await Loan.findById(loanId);
 
-    // Agrega la información del pago al array de pagos del préstamo
+        // Agrega la información del pago al array de pagos del préstamo
         loan.payments.push({
             amount: paymentAmount,
             paymentDate: new Date()
-          });
+        });
 
         if (!loan) {
             return res.status(400).json({ success: false, message: 'Préstamo no encontrado' });
@@ -99,11 +101,11 @@ router.post('/loan/:id/pay', verifyAuth, async (req, res) => {
         // Guarda los cambios en el préstamo
         const updatedLoan = await loan.save();
         // Guarda el pago en la base de datos
-          // Crea un nuevo documento de pago
-    const payment = new Payments({
-        loan: loanId,
-        amount: paymentAmount
-      });
+        // Crea un nuevo documento de pago
+        const payment = new Payments({
+            loan: loanId,
+            amount: paymentAmount
+        });
         const savedPayment = await payment.save();
         res.status(200).json({ success: true, message: 'Pago procesado exitosamente', loan: updatedLoan });
     } catch (error) {
