@@ -16,6 +16,7 @@ const LoanSchema = new mongoose.Schema(
   job: { type: String, required: true},
     amount: { type: Number, required: true },
     loanPayment: { type: Number, required: true },
+    loanPaymentMonth: { type: Number }, // Monto pendiente de la cuota mensual
     time: { type: Number, required: true },
     categories: { type: Array },
     interestRate: { type: Number, required: true },
@@ -24,6 +25,10 @@ const LoanSchema = new mongoose.Schema(
     status: { type: String, default: "pending" },
     totalPayment: { type: Number, required: true },
     totalPaymentOriginal: { type: Number, required: true },
+    paymentLoanDate: [{
+      type: Date,
+      required: true
+    }],
     payments: [{
       amount: {
         type: Number,
@@ -31,7 +36,7 @@ const LoanSchema = new mongoose.Schema(
       },
       paymentDate: {
         type: Date,
-        required: true
+      //  required: true
       }
     }],
     dueDate: {

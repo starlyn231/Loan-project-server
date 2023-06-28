@@ -48,8 +48,8 @@ router.post('/loan/:id/pay', verifyAuth, async (req, res) => {
 
 
     try {
-        console.log('req.params. ' ,req.params.id)
-        console.log(' body payment',req.body.payment)
+        console.log('req.params. ', req.params.id)
+        console.log(' body payment', req.body.payment)
         const loanId = req.params.id;
         const paymentAmount = req.body.payment;
         // Aquí debes implementar la lógica para procesar el pago y actualizar el estado del préstamo
@@ -75,20 +75,22 @@ router.post('/loan/:id/pay', verifyAuth, async (req, res) => {
             return res.status(400).json({ success: false, message: 'El préstamo se encuentra en mora' });
         }
         // Calcula el monto pendiente
-        const remainingAmount = loan.totalPayment - paymentAmount;
-        if (remainingAmount === 0) {
+        const remainingAmountTotal = loan.totalPayment - paymentAmount;
+        if (remainingAmountTotal === 0) {
             // Si el monto pendiente es cero, se marca el préstamo como pagado
             loan.status = 'Pagado';
-        } else if (remainingAmount > 0) {
+        } else if (remainingAmountTotal > 0) {
             // Si el monto pendiente es mayor a cero, se actualiza el monto y se verifica si está en mora
-            loan.totalPayment = remainingAmount;
+            loan.totalPayment = remainingAmountTotal;
             const dueDate = loan.dueDate; // Aquí debes tener el campo de fecha de vencimiento en tu modelo de préstamo
 
             if (dueDate < new Date()) {
                 // Si la fecha de vencimiento ya ha pasado, se marca el préstamo como moroso
-                const daysLate = Math.floor((new Date() - dueDate) / (1000 * 60 * 60 * 24)); // Calcula los días de atraso
-                console.log(daysLate)
-                if (daysLate > 10) {
+                // const daysLate = Math.floor((new Date() - dueDate) / (1000 * 60 * 60 * 24)); // Calcula los días de atraso
+                const minutesLate = Math.floor((new Date() - dueDate) / (1000 * 60));
+        // console.log(daysLate)
+        console.log(minutesLate)
+                if (minutesLate) {
                     // Si los días de atraso son mayores a 10, se agrega mora
                     const moraAmount = loan.amount * 0.05; // Ejemplo: se agrega un 5% de mora al monto pendiente
                     loan.totalPayment += moraAmount;
@@ -96,7 +98,19 @@ router.post('/loan/:id/pay', verifyAuth, async (req, res) => {
                 }
             }
         }
+        const remainingPaymentMonth = loan.loanPaymentMonth - paymentAmount;
+        let notificationMessage = '';
+        if (remainingPaymentMonth >= 0) {
 
+            loan.loanPaymentMonth = remainingPaymentMonth;
+            notificationMessage = `Le falta por pagar $ ${remainingPaymentMonth} para completar la cuota.`;
+        } 
+        
+        else {
+            // Si el pago es menor que la cuota mensual
+            loan.loanPaymentMonth = 0;
+            notificationMessage = `El cliente no tiene ningun balance pendiente, el pago se le restara del capital del prestamo.`;
+        }
 
         // Guarda los cambios en el préstamo
         const updatedLoan = await loan.save();
@@ -107,7 +121,7 @@ router.post('/loan/:id/pay', verifyAuth, async (req, res) => {
             amount: paymentAmount
         });
         const savedPayment = await payment.save();
-        res.status(200).json({ success: true, message: 'Pago procesado exitosamente', loan: updatedLoan });
+        res.status(200).json({ success: true, message: 'Pago procesado exitosamente', loan: updatedLoan, notification: notificationMessage });
     } catch (error) {
         console.log(error);
         res.status(400).json({ success: false, message: 'Error al procesar el pago' });
